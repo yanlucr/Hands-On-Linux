@@ -1,11 +1,11 @@
-int ledPin = 5;        // Pino de saída para o LED
+int ledPin = 25;        // Pino de saída para o LED
 int ledValue = 10;     // Valor inicial do LED (0 a 100)
 
-int ldrPin = 36;       // Pino de entrada para o LDR
+int ldrPin = 26;       // Pino de entrada para o LDR
 int ldrMax = 4000;     // Valor máximo do LDR encontrado após testes
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
     
     pinMode(ledPin, OUTPUT);
     pinMode(ldrPin, INPUT);
