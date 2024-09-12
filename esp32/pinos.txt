@@ -1,0 +1,2 @@
+int ledPin = 5;        // Pino de saída para o LED
+int ldrPin = 36;       // Pino de entrada para o LDR
