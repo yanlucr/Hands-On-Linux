@@ -1,4 +1,4 @@
-obj-m += probe.o
+obj-m += sysfs.o
 PWD := $(CURDIR)
 
 all:

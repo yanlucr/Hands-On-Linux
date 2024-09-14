@@ -83,7 +83,7 @@ static void usb_disconnect(struct usb_interface *interface) {
     kfree(usb_out_buffer);
 }
 
-static int usb_read_serial(char *read_buffer, size_t buffer_size) { //adicionei os parametros na função
+static int usb_read_serial(void) { //adicionei os parametros na função
     int ret, actual_size;
     int retries = 10;                       // Tenta algumas vezes receber uma resposta da USB. Depois desiste.
 
@@ -120,7 +120,7 @@ static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, c
     printk(KERN_INFO "SmartLamp: Lendo %s ...\n", attr_name);
 
     // Implemente a leitura do valor do led usando a função usb_read_serial()
-    if (usb_read_serial(read_buffer, sizeof(read_buffer)) >= 0) {
+    if (usb_read_serial() >= 0) {
         // converte o valor lido para um inteiro
         sscanf(read_buffer, "%d", &value);
     } else {
