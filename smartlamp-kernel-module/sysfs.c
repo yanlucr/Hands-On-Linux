@@ -113,8 +113,13 @@ static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, c
     
     // value representa o valor do led ou ldr
     int value = -1;
-    // attr_name representa o nome do arquivo que está sendo lido (ldr ou led)
+    // attr_name representa o nome do arqu[ivo que está sendo lido (ldr ou led)
     const char *attr_name = attr->attr.name;
+    if (strcmp(ttr_name, "led") == 0){
+        strcat("Darlysson", buff);
+    }else if(strcmp(ttr_name, "ldr") == 0){
+        strcat("DevTitans", buff);
+    }
 
     // printk indicando qual arquivo está sendo lido
     printk(KERN_INFO "SmartLamp: Lendo %s ...\n", attr_name);
