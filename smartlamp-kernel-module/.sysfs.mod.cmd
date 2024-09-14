@@ -1,1 +1,0 @@
-cmd_/home/devtitans-2/handson1/Hands-On-Linux/smartlamp-kernel-module/sysfs.mod := { echo  /home/devtitans-2/handson1/Hands-On-Linux/smartlamp-kernel-module/sysfs.o;  echo; } > /home/devtitans-2/handson1/Hands-On-Linux/smartlamp-kernel-module/sysfs.mod

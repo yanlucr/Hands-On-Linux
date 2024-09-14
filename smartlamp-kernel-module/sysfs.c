@@ -115,12 +115,11 @@ static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, c
     int value = -1;
     // attr_name representa o nome do arqu[ivo que está sendo lido (ldr ou led)
     const char *attr_name = attr->attr.name;
-    if (strcmp(ttr_name, "led") == 0){
-        strcat("Darlysson", buff);
-    }else if(strcmp(ttr_name, "ldr") == 0){
-        strcat("DevTitans", buff);
+    if (strcmp(attr_name, "led") == 0){
+        strcat(buff, "Darlysson\n");
+    }else if(strcmp(attr_name, "ldr") == 0){
+        strcat(buff, "DevTitans\n");
     }
-
     // printk indicando qual arquivo está sendo lido
     printk(KERN_INFO "SmartLamp: Lendo %s ...\n", attr_name);
 
@@ -133,7 +132,7 @@ static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, c
     }
 
 
-    sprintf(buff, "%d\n", value);                   // Cria a mensagem com o valor do led, ldr
+    //sprintf(buff, "%d\n", value);                   // Cria a mensagem com o valor do led, ldr
     return strlen(buff);
 }
 
@@ -156,6 +155,15 @@ static ssize_t attr_store(struct kobject *sys_obj, struct kobj_attribute *attr, 
     if (ret < 0) {
         printk(KERN_ALERT "SmartLamp: erro ao setar o valor do %s.\n", attr_name);
         return -EACCES;
+    }
+
+    if (ret == 0){
+        if (strcmp(attr_name, "led") == 0){
+            printk(KERN_INFO "Smartlamp: o valor escrito %ld", value);
+            
+        }else if(strcmp(attr_name, "ldr") == 0){
+            printk(KERN_ALERT "SmartLamp: erro ao setar o valor do %s.\n", attr_name);
+        }
     }
 
     return strlen(buff);
