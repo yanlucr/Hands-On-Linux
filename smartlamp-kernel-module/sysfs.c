@@ -15,8 +15,8 @@ static uint usb_in, usb_out;                       // Endereços das portas de e
 static char *usb_in_buffer, *usb_out_buffer;       // Buffers de entrada e saída da USB
 static int usb_max_size;                           // Tamanho máximo de uma mensagem USB
 
-#define VENDOR_ID   SUBSTITUA_PELO_VENDORID /* Encontre o VendorID  do smartlamp */
-#define PRODUCT_ID  SUBSTITUA_PELO_PRODUCTID /* Encontre o ProductID do smartlamp */
+#define VENDOR_ID   0x10c4 /* Encontre o VendorID  do smartlamp */
+#define PRODUCT_ID  0xea60 /* Encontre o ProductID do smartlamp */
 static const struct usb_device_id id_table[] = { { USB_DEVICE(VENDOR_ID, PRODUCT_ID) }, {} };
 
 static int  usb_probe(struct usb_interface *ifce, const struct usb_device_id *id); // Executado quando o dispositivo é conectado na USB
@@ -83,7 +83,7 @@ static void usb_disconnect(struct usb_interface *interface) {
     kfree(usb_out_buffer);
 }
 
-static int usb_read_serial() {
+static int usb_read_serial(char *read_buffer, size_t buffer_size) { //adicionei os parametros na função
     int ret, actual_size;
     int retries = 10;                       // Tenta algumas vezes receber uma resposta da USB. Depois desiste.
 
@@ -108,6 +108,9 @@ static int usb_read_serial() {
 
 // Executado quando o arquivo /sys/kernel/smartlamp/{led, ldr} é lido (e.g., cat /sys/kernel/smartlamp/led)
 static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, char *buff) {
+    char read_buffer[128];  //declarando a varialvel que faltava - Ajuste o tamanho conforme necessário
+
+    
     // value representa o valor do led ou ldr
     int value = -1;
     // attr_name representa o nome do arquivo que está sendo lido (ldr ou led)
@@ -117,7 +120,13 @@ static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, c
     printk(KERN_INFO "SmartLamp: Lendo %s ...\n", attr_name);
 
     // Implemente a leitura do valor do led usando a função usb_read_serial()
-        
+    if (usb_read_serial(read_buffer, sizeof(read_buffer)) >= 0) {
+        // converte o valor lido para um inteiro
+        sscanf(read_buffer, "%d", &value);
+    } else {
+        printk(KERN_ERR "SmartLamp: Falha ao ler o valor via USB.\n");
+    }
+
 
     sprintf(buff, "%d\n", value);                   // Cria a mensagem com o valor do led, ldr
     return strlen(buff);
