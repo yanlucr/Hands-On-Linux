@@ -1,4 +1,5 @@
 obj-m += sysfs.o
+
 PWD := $(CURDIR)
 
 all:

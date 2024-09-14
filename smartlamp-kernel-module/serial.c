@@ -15,8 +15,8 @@ static uint usb_in, usb_out;                       // Endereços das portas de e
 static char *usb_in_buffer, *usb_out_buffer;       // Buffers de entrada e saída da USB
 static int usb_max_size;                           // Tamanho máximo de uma mensagem USB
 
-#define VENDOR_ID   SUBSTITUA_PELO_VENDORID /* Encontre o VendorID  do smartlamp */
-#define PRODUCT_ID  SUBSTITUA_PELO_PRODUCTID /* Encontre o ProductID do smartlamp */
+#define VENDOR_ID   0x10c4 /* Encontre o VendorID  do smartlamp */
+#define PRODUCT_ID  0xea60 /* Encontre o ProductID do smartlamp */
 static const struct usb_device_id id_table[] = { { USB_DEVICE(VENDOR_ID, PRODUCT_ID) }, {} };
 
 static int  usb_probe(struct usb_interface *ifce, const struct usb_device_id *id); // Executado quando o dispositivo é conectado na USB
@@ -80,9 +80,28 @@ static int usb_read_serial() {
             continue;
         }
 
+        int current_index = 0;
+        char raw_return[MAX_RECV_LINE];
+        char *actual_return = NULL; // valor numerico em string
+        while ((actual_return = strstr(raw_return, "RES GET_LDR")) == NULL) { // repetir ate pegar RES GET_LDR
+            usb_bulk_msg(smartlamp_device, usb_rcvbulkpipe(smartlamp_device, usb_in), usb_in_buffer, min(usb_max_size, MAX_RECV_LINE), &actual_size, 1000);
+            raw_return[current_index++] = usb_in_buffer[0];
+        }
+        actual_return = actual_return + strlen("RES GET_LDR "); // valor numerico sem o lixo na frente
+        
+        // pegar valor numerico
+        do {
+            usb_bulk_msg(smartlamp_device, usb_rcvbulkpipe(smartlamp_device, usb_in), usb_in_buffer, min(usb_max_size, MAX_RECV_LINE), &actual_size, 1000);
+            raw_return[current_index++] = usb_in_buffer[0];
+        } while (usb_in_buffer[0] != '\n');
+        raw_return[current_index-1] = 0;
+
+        int ldr_ret;
+        sscanf(actual_return, "%d", &ldr_ret);
+
         //caso tenha recebido a mensagem 'RES_LDR X' via serial acesse o buffer 'usb_in_buffer' e retorne apenas o valor da resposta X
         //retorne o valor de X em inteiro
-        return 0;
+        return ldr_ret;
     }
 
     return -1; 
