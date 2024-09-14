@@ -1,8 +1,8 @@
 
 
-# DevTITANS 05 - HandsOn Linux - Equipe 0X
+# DevTITANS 06 - HandsOn Linux - Equipe 1
 
-Bem-vindo ao repositório da Equipe 0X do HandsON de Linux do DevTITANS! Este projeto contém um firmware para o ESP32 escrito em formato Arduino `.ino`, bem como um driver do kernel Linux escrito em C. O objetivo é demonstrar como criar uma solução completa de hardware e software que integra um dispositivo ESP32 com um sistema Linux.
+Bem-vindo ao repositório da Equipe 1 do HandsON de Linux do DevTITANS! Este projeto contém um firmware para o ESP32 escrito em formato Arduino `.ino`, bem como um driver do kernel Linux escrito em C. O objetivo é demonstrar como criar uma solução completa de hardware e software que integra um dispositivo ESP32 com um sistema Linux.
 
 ## Tabela de Conteúdos
 
@@ -16,13 +16,11 @@ Bem-vindo ao repositório da Equipe 0X do HandsON de Linux do DevTITANS! Este pr
 - [Contato](#contato)
 
 ## Contribuidores
+![alvaromerces](https://github.com/user-attachments/assets/9f04195f-f76f-4d46-aa13-702a258b479c)
+![juan](https://github.com/user-attachments/assets/0ef835ad-86b4-4848-a9b6-4201b3ac4e0a)
+![Darlysson](https://github.com/user-attachments/assets/633ef90b-16f2-40a1-9c2b-35887fccee6c)
+![Yan](https://github.com/user-attachments/assets/23bd5dbd-b0e0-4c87-8629-d8cceaa2903d)
 
-<img src="https://github.com/DevTITANS05/Hands-On-Linux-fork-/assets/21023906/85e61f3e-476c-47a4-82d5-4054e856c67b" width="180" >
-<img src="https://github.com/DevTITANS05/Hands-On-Linux-fork-/assets/21023906/85e61f3e-476c-47a4-82d5-4054e856c67b" width="180" >
-<img src="https://github.com/DevTITANS05/Hands-On-Linux-fork-/assets/21023906/85e61f3e-476c-47a4-82d5-4054e856c67b" width="180" >
-<img src="https://github.com/DevTITANS05/Hands-On-Linux-fork-/assets/21023906/85e61f3e-476c-47a4-82d5-4054e856c67b" width="180" >
-<img src="https://github.com/DevTITANS05/Hands-On-Linux-fork-/assets/21023906/85e61f3e-476c-47a4-82d5-4054e856c67b" width="180" >
-<img src="https://github.com/DevTITANS05/Hands-On-Linux-fork-/assets/21023906/85e61f3e-476c-47a4-82d5-4054e856c67b" width="180" >
 
 - **Nome do(a) Aluno(a) 01:** Desenvolvedor do Firmware e Mantenedor do Projeto
 - **Nome do(a) Aluno(a) 02:** Desenvolvedor do Firmware
@@ -74,6 +72,9 @@ Este projeto serve como um exemplo para desenvolvedores interessados em construi
 ## Instalação
 
 ### Firmware ESP32
+
+![esp32](https://github.com/user-attachments/assets/fdfbaf9f-7b9e-42bd-b92b-a8bbec443f8f)
+
 
 1. **Abra o Arduino IDE e carregue o firmware:**
     ```sh
@@ -141,4 +142,7 @@ Depois que o driver e o firmware estiverem configurados, você poderá interagir
     
 ## Contato
 
-Para perguntas, sugestões ou feedback, entre em contato com o mantenedor do projeto em [maintainer@example.com](mailto:maintainer@example.com).
+Para perguntas, sugestões ou feedback, entre em contato:
+- **yanlucr@gmail.com**
+- **juan.veiga@icomp.ufam.edu.br**
+- **alvaro.s.merces@gmail.com**
