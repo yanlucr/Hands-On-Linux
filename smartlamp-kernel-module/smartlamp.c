@@ -68,7 +68,8 @@ static int usb_probe(struct usb_interface *interface, const struct usb_device_id
     usb_in_buffer = kmalloc(usb_max_size, GFP_KERNEL);
     usb_out_buffer = kmalloc(usb_max_size, GFP_KERNEL);
 
-    usb_send_cmd("SET_LED", 0);
+    int ret_value = usb_send_cmd("SET_LED", 0);
+    printk(KERN_INFO "SmartLamp: Valor retornado: %d\n", ret_value);
 
     return 0;
 }
@@ -93,8 +94,6 @@ static int usb_send_cmd(char *cmd, int param) {
     char *resp_pos;                         // Posição na linha lida que contém o número retornado pelo dispositivo
     long resp_number = -1;                  // Número retornado pelo dispositivo (e.g., valor do led, valor do ldr)
 
-    printk(KERN_INFO "SmartLamp: Enviando comando: %s\n", cmd);
-
     // preencha o buffer                     // Caso contrário, é só o comando mesmo
     if (param != -1) {
         sprintf(usb_out_buffer, "%s %d\n", cmd, param);
@@ -102,8 +101,7 @@ static int usb_send_cmd(char *cmd, int param) {
         sprintf(usb_out_buffer, "%s\n", cmd);
     }
 
-    printk(KERN_INFO "SmartLamp: Enviando comando: %s\n", usb_out_buffer);
-
+    printk(KERN_INFO "SmartLamp: Enviando comando: %s", usb_out_buffer);
 
     // Envia o comando (usb_out_buffer) para a USB
     // Procure a documentação da função usb_bulk_msg para entender os parâmetros
@@ -113,8 +111,6 @@ static int usb_send_cmd(char *cmd, int param) {
         return -1;
     }
 
-    printk("Cmd send, cod: %d", ret);
-
     sprintf(resp_expected, "RES %s", cmd);  // Resposta esperada. Ficará lendo linhas até receber essa resposta.
 
     // Espera pela resposta correta do dispositivo (desiste depois de várias tentativas)
@@ -122,11 +118,18 @@ static int usb_send_cmd(char *cmd, int param) {
         // Lê dados da USB
         ret = usb_bulk_msg(smartlamp_device, usb_rcvbulkpipe(smartlamp_device, usb_in), usb_in_buffer, min(usb_max_size, MAX_RECV_LINE), &actual_size, 2000);
         if (ret) {
-            printk(KERN_ERR "SmartLamp: Erro ao ler dados da USB (tentativa %d). Codigo: %d\n", ret, retries--);
+            printk(KERN_ERR "SmartLamp: Erro ao ler dados da USB (tentativa %d). Codigo: %d\n", retries--, ret);
             continue;
         }
 
         // adicione a sua implementação do médodo usb_read_serial
+        usb_in_buffer[actual_size-1] = 0; // Remove quebra de linha
+
+        if (strstr(usb_in_buffer, resp_expected) != NULL) { // Resposta esperada encontrada no buffer
+            resp_pos = usb_in_buffer + strlen(resp_expected) + 1; // Pula a parte textual e deixa apenas o número
+            kstrtol(resp_pos, 10, &resp_number); // Faz a conversão da string
+            return resp_number;
+        }
     }
     return -1; // Não recebi a resposta esperada do dispositivo
 }
