@@ -68,9 +68,6 @@ static int usb_probe(struct usb_interface *interface, const struct usb_device_id
     usb_in_buffer = kmalloc(usb_max_size, GFP_KERNEL);
     usb_out_buffer = kmalloc(usb_max_size, GFP_KERNEL);
 
-    int ret_value = usb_send_cmd("SET_LED", 0);
-    printk(KERN_INFO "SmartLamp: Valor retornado: %d\n", ret_value);
-
     return 0;
 }
 
@@ -145,6 +142,11 @@ static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, c
     printk(KERN_INFO "SmartLamp: Lendo %s ...\n", attr_name);
 
     // Implemente a leitura do valor do led ou ldr usando a função usb_send_cmd()
+    if (strcmp(attr_name, "led") == 0) {
+        value = usb_send_cmd("GET_LED", -1);
+    } else if (strcmp(attr_name, "ldr") == 0) {
+        // nao implementado
+    }
 
     sprintf(buff, "%d\n", value);                   // Cria a mensagem com o valor do led, ldr
     return strlen(buff);
@@ -167,6 +169,12 @@ static ssize_t attr_store(struct kobject *sys_obj, struct kobj_attribute *attr, 
     printk(KERN_INFO "SmartLamp: Setando %s para %ld ...\n", attr_name, value);
 
     // utilize a função usb_send_cmd para enviar o comando SET_LED X
+    if (strcmp(attr_name, "led") == 0) {
+        usb_send_cmd("SET_LED", value);
+    } else if (strcmp(attr_name, "ldr") == 0) {
+        printk(KERN_ERR "SmartLamp: você não pode setar um valor ao ldr.\n");
+        return -1;
+    }
 
     if (ret < 0) {
         printk(KERN_ALERT "SmartLamp: erro ao setar o valor do %s.\n", attr_name);
