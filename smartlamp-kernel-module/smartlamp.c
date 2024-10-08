@@ -145,7 +145,7 @@ static ssize_t attr_show(struct kobject *sys_obj, struct kobj_attribute *attr, c
     if (strcmp(attr_name, "led") == 0) {
         value = usb_send_cmd("GET_LED", -1);
     } else if (strcmp(attr_name, "ldr") == 0) {
-        // nao implementado
+        value = usb_send_cmd("GET_LDR", -1);
     }
 
     sprintf(buff, "%d\n", value);                   // Cria a mensagem com o valor do led, ldr
