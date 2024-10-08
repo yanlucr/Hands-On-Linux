@@ -110,25 +110,43 @@ static int usb_send_cmd(char *cmd, int param) {
 
     sprintf(resp_expected, "RES %s", cmd);  // Resposta esperada. Ficará lendo linhas até receber essa resposta.
 
-    // Espera pela resposta correta do dispositivo (desiste depois de várias tentativas)
-    while (retries > 0) {
-        // Lê dados da USB
+    int current_index = 0;
+    while (current_index != strlen(resp_expected)) { // pular para a parte numerica
         ret = usb_bulk_msg(smartlamp_device, usb_rcvbulkpipe(smartlamp_device, usb_in), usb_in_buffer, min(usb_max_size, MAX_RECV_LINE), &actual_size, 2000);
         if (ret) {
-            printk(KERN_ERR "SmartLamp: Erro ao ler dados da USB (tentativa %d). Codigo: %d\n", retries--, ret);
-            continue;
+            printk(KERN_ERR "SmartLamp: Erro ao ler dados da USB.\n");
+            return -1;
         }
 
-        // adicione a sua implementação do médodo usb_read_serial
-        usb_in_buffer[actual_size-1] = 0; // Remove quebra de linha
-
-        if (strstr(usb_in_buffer, resp_expected) != NULL) { // Resposta esperada encontrada no buffer
-            resp_pos = usb_in_buffer + strlen(resp_expected) + 1; // Pula a parte textual e deixa apenas o número
-            kstrtol(resp_pos, 10, &resp_number); // Faz a conversão da string
-            return resp_number;
+        if (actual_size != 1) // provavalmente lixo
+            continue;
+        
+        if (usb_in_buffer[0] == resp_expected[current_index]) {
+            current_index++;
+        } else {
+            current_index = 0;
         }
     }
-    return -1; // Não recebi a resposta esperada do dispositivo
+
+    // pegar valor numerico
+    current_index = 0;
+    char number[10] = { 0 };
+    while (usb_in_buffer[0] != '\n') {
+        ret = usb_bulk_msg(smartlamp_device, usb_rcvbulkpipe(smartlamp_device, usb_in), usb_in_buffer, min(usb_max_size, MAX_RECV_LINE), &actual_size, 2000);
+        if (ret) {
+            printk(KERN_ERR "SmartLamp: Erro ao ler dados da USB.\n");
+            return -1;
+        }
+
+        if (actual_size != 1) // provavalmente lixo
+            continue;
+
+        number[current_index++] = usb_in_buffer[0];
+    }
+
+    sscanf(number, "%d", &resp_number);
+
+    return resp_number;
 }
 
 // Executado quando o arquivo /sys/kernel/smartlamp/{led, ldr} é lido (e.g., cat /sys/kernel/smartlamp/led)
