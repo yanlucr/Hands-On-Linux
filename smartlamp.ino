@@ -14,8 +14,6 @@ void setup() {
     ledUpdate();  
     
     Serial.printf("SmartLamp Initialized.\n");
-    String command = "GET_LDR";
-    processCommand(command);
 }
 
 // Função loop será executada infinitamente pelo ESP32
